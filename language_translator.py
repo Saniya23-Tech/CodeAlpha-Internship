@@ -1,0 +1,239 @@
+import threading
+import tkinter as tk
+from tkinter import ttk, messagebox
+from deep_translator import GoogleTranslator
+
+class LanguageTranslator:
+    """Professional Language Translator with threaded translation and clean UI"""
+
+    # Language dictionary (add more as needed)
+    LANGUAGES = {
+        "Auto Detect": "auto",
+        "English": "en",
+        "Hindi": "hi",
+        "Telugu": "te",
+        "Tamil": "ta",
+        "Spanish": "es",
+        "French": "fr",
+        "German": "de",
+        "Italian": "it",
+        "Portuguese": "pt",
+        "Russian": "ru",
+        "Japanese": "ja",
+        "Korean": "ko",
+        "Chinese (Simplified)": "zh-CN",
+        "Arabic": "ar",
+        "Dutch": "nl",
+    }
+
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Professional Language Translator")
+        self.root.geometry("800x650")
+        self.root.minsize(700, 600)
+        self.root.configure(bg="#f0f4f8")
+
+        # Style for ttk widgets
+        self.style = ttk.Style()
+        self.style.theme_use("clam")
+        self.style.configure("TLabel", background="#f0f4f8", font=("Segoe UI", 11))
+        self.style.configure("TButton", font=("Segoe UI", 10, "bold"), padding=5)
+        self.style.configure("TCombobox", font=("Segoe UI", 10))
+
+        # Variables for language selection
+        self.source_lang = tk.StringVar(value="Auto Detect")
+        self.target_lang = tk.StringVar(value="Hindi")
+
+        # Build UI
+        self.create_widgets()
+
+        # Bind keyboard shortcuts
+        self.root.bind("<Control-Return>", lambda e: self.start_translation())
+        self.root.bind("<Control-c>", lambda e: self.copy_output())
+
+    def create_widgets(self):
+        """Create all UI components using grid layout"""
+        # Main container with padding
+        main_frame = ttk.Frame(self.root, padding="20 20 20 20")
+        main_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Title
+        title = ttk.Label(main_frame, text="Language Translator", font=("Segoe UI", 22, "bold"))
+        title.grid(row=0, column=0, columnspan=4, pady=(0, 20))
+
+        # --- Source language row ---
+        ttk.Label(main_frame, text="Source Language:", font=("Segoe UI", 11, "bold")).grid(row=1, column=0, sticky="w", pady=5)
+        src_combo = ttk.Combobox(main_frame, textvariable=self.source_lang, values=list(self.LANGUAGES.keys()),
+                                 state="readonly", width=25, font=("Segoe UI", 10))
+        src_combo.grid(row=1, column=1, padx=(0, 10), pady=5, sticky="ew")
+
+        # Swap languages button
+        self.swap_btn = ttk.Button(main_frame, text="⇄ Swap", command=self.swap_languages, width=8)
+        self.swap_btn.grid(row=1, column=2, padx=5, pady=5)
+
+        # --- Target language row ---
+        ttk.Label(main_frame, text="Target Language:", font=("Segoe UI", 11, "bold")).grid(row=1, column=3, sticky="w", pady=5, padx=(10,0))
+        target_combo = ttk.Combobox(main_frame, textvariable=self.target_lang, values=list(self.LANGUAGES.keys()),
+                                    state="readonly", width=25, font=("Segoe UI", 10))
+        target_combo.grid(row=1, column=4, padx=(0, 10), pady=5, sticky="ew")
+
+        # --- Input section ---
+        ttk.Label(main_frame, text="📝 Enter Text:", font=("Segoe UI", 12, "bold")).grid(row=2, column=0, columnspan=5, sticky="w", pady=(20,5))
+        self.input_text = tk.Text(main_frame, height=6, font=("Segoe UI", 12), wrap=tk.WORD, relief=tk.FLAT, borderwidth=2,
+                                  highlightthickness=1, highlightcolor="#4a90e2")
+        self.input_text.grid(row=3, column=0, columnspan=5, pady=(0, 10), sticky="nsew")
+
+        # Input buttons frame
+        input_btn_frame = ttk.Frame(main_frame)
+        input_btn_frame.grid(row=4, column=0, columnspan=5, pady=(0, 10), sticky="ew")
+        ttk.Button(input_btn_frame, text="Clear Input", command=self.clear_input).pack(side=tk.LEFT, padx=5)
+        ttk.Button(input_btn_frame, text="Copy Input", command=self.copy_input).pack(side=tk.LEFT, padx=5)
+
+        # --- Translation button ---
+        self.translate_btn = ttk.Button(main_frame, text="🔄 Translate (Ctrl+Enter)", command=self.start_translation, width=30)
+        self.translate_btn.grid(row=5, column=0, columnspan=5, pady=10)
+
+        # --- Progress bar (visible only when translating) ---
+        self.progress = ttk.Progressbar(main_frame, mode='indeterminate', length=400)
+        self.progress.grid(row=6, column=0, columnspan=5, pady=(0, 10))
+        self.progress.grid_remove()  # hidden initially
+
+        # --- Output section ---
+        ttk.Label(main_frame, text="📄 Translated Text:", font=("Segoe UI", 12, "bold")).grid(row=7, column=0, columnspan=5, sticky="w", pady=(10,5))
+        self.output_text = tk.Text(main_frame, height=6, font=("Segoe UI", 12), wrap=tk.WORD, relief=tk.FLAT, borderwidth=2,
+                                   highlightthickness=1, highlightcolor="#4a90e2")
+        self.output_text.grid(row=8, column=0, columnspan=5, pady=(0, 10), sticky="nsew")
+
+        # Output buttons frame
+        output_btn_frame = ttk.Frame(main_frame)
+        output_btn_frame.grid(row=9, column=0, columnspan=5, sticky="ew")
+        ttk.Button(output_btn_frame, text="📋 Copy Output", command=self.copy_output).pack(side=tk.LEFT, padx=5)
+        ttk.Button(output_btn_frame, text="🗑️ Clear Output", command=self.clear_output).pack(side=tk.LEFT, padx=5)
+
+        # --- Status bar ---
+        self.status_var = tk.StringVar(value="Ready")
+        status_bar = ttk.Label(self.root, textvariable=self.status_var, relief=tk.SUNKEN, anchor=tk.W,
+                               font=("Segoe UI", 9), background="#e9ecef")
+        status_bar.pack(side=tk.BOTTOM, fill=tk.X)
+
+        # Configure grid weights so Text widgets expand
+        main_frame.columnconfigure(1, weight=1)
+        main_frame.columnconfigure(4, weight=1)
+        main_frame.rowconfigure(3, weight=1)
+        main_frame.rowconfigure(8, weight=1)
+
+    def swap_languages(self):
+        """Swap source and target languages (and also swap text if possible)"""
+        src = self.source_lang.get()
+        tgt = self.target_lang.get()
+        # Prevent swapping if source is 'Auto Detect' (makes no sense as target)
+        if src == "Auto Detect":
+            messagebox.showinfo("Info", "Cannot swap when source is 'Auto Detect'.\nPlease choose a specific source language first.")
+            return
+        self.source_lang.set(tgt)
+        self.target_lang.set(src)
+        # Optionally swap the text content too
+        input_content = self.input_text.get("1.0", tk.END).strip()
+        output_content = self.output_text.get("1.0", tk.END).strip()
+        if input_content and output_content:
+            self.input_text.delete("1.0", tk.END)
+            self.input_text.insert("1.0", output_content)
+            self.output_text.delete("1.0", tk.END)
+            self.output_text.insert("1.0", input_content)
+        self.status_var.set("Languages swapped")
+
+    def clear_input(self):
+        self.input_text.delete("1.0", tk.END)
+        self.status_var.set("Input cleared")
+
+    def clear_output(self):
+        self.output_text.delete("1.0", tk.END)
+        self.status_var.set("Output cleared")
+
+    def copy_input(self):
+        text = self.input_text.get("1.0", tk.END).strip()
+        if text:
+            self.root.clipboard_clear()
+            self.root.clipboard_append(text)
+            self.root.update()
+            self.status_var.set("Input copied to clipboard")
+        else:
+            messagebox.showwarning("Nothing to copy", "Input text is empty.")
+
+    def copy_output(self):
+        text = self.output_text.get("1.0", tk.END).strip()
+        if text:
+            self.root.clipboard_clear()
+            self.root.clipboard_append(text)
+            self.root.update()
+            self.status_var.set("Translated text copied to clipboard")
+        else:
+            messagebox.showwarning("Nothing to copy", "No translated text to copy.")
+
+    def start_translation(self):
+        """Start translation in a separate thread to keep UI responsive"""
+        # Disable translate button during translation
+        self.translate_btn.config(state=tk.DISABLED)
+        self.progress.grid()
+        self.progress.start(10)
+        self.status_var.set("Translating...")
+
+        thread = threading.Thread(target=self.translate_text, daemon=True)
+        thread.start()
+
+    def translate_text(self):
+        """Perform actual translation using deep-translator"""
+        try:
+            text = self.input_text.get("1.0", tk.END).strip()
+            if not text:
+                self.root.after(0, lambda: messagebox.showwarning("Warning", "Please enter text to translate"))
+                return
+
+            src_key = self.source_lang.get()
+            tgt_key = self.target_lang.get()
+
+            # Get language codes
+            src_code = self.LANGUAGES[src_key]
+            tgt_code = self.LANGUAGES[tgt_key]
+
+            # Auto-detect source if needed
+            if src_code == "auto":
+                # deep-translator supports 'auto' as source
+                translator = GoogleTranslator(source='auto', target=tgt_code)
+                translated = translator.translate(text)
+            else:
+                translator = GoogleTranslator(source=src_code, target=tgt_code)
+                translated = translator.translate(text)
+
+            # Update output in main thread
+            self.root.after(0, self.update_output, translated)
+
+        except Exception as e:
+            error_msg = str(e)
+            if "503" in error_msg or "Service Unavailable" in error_msg:
+                error_msg = "Google Translate service is temporarily unavailable. Please try again later."
+            self.root.after(0, self.show_error, error_msg)
+
+        finally:
+            # Stop progress bar and re-enable button in main thread
+            self.root.after(0, self.translation_done)
+
+    def update_output(self, translated_text):
+        self.output_text.delete("1.0", tk.END)
+        self.output_text.insert(tk.END, translated_text)
+        self.status_var.set("Translation completed")
+
+    def show_error(self, err):
+        messagebox.showerror("Translation Error", f"Something went wrong:\n{err}")
+        self.status_var.set("Error occurred")
+
+    def translation_done(self):
+        self.progress.stop()
+        self.progress.grid_remove()
+        self.translate_btn.config(state=tk.NORMAL)
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = LanguageTranslator(root)
+    root.mainloop()
