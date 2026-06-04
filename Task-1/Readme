@@ -1,0 +1,142 @@
+# 🌍 Language Translator – CodeAlpha AI Task
+
+A professional desktop application that translates text between 15+ languages using Google Translate.  
+Built with Python, Tkinter, and `deep-translator`.  
+Developed as part of my **CodeAlpha Artificial Intelligence Internship**.
+
+---
+
+## 📌 Table of Contents
+
+1. [Overview](#overview)
+2. [What I Improved (vs. Original)](#what-i-improved-vs-original)
+3. [Features](#features)
+4. [Installation](#installation)
+5. [How to Run the Code](#how-to-run-the-code)
+6. [How the Application Works – Step by Step](#how-the-application-works--step-by-step)
+7. [Code Structure (Object-Oriented Programming)](#code-structure-object-oriented-programming)
+8. [OOP Explained Simply](#oop-explained-simply)
+9. [Why Threading?](#why-threading)
+10. [Troubleshooting](#troubleshooting)
+11. [Future Improvements](#future-improvements)
+
+---
+
+## 📖 Overview
+
+This language translator is a GUI application that allows users to:
+
+- Type or paste text in any language.
+- Choose source and target languages (or auto‑detect source).
+- Translate instantly with a button click or keyboard shortcut.
+- Copy the result to clipboard.
+- Swap languages with one click.
+
+Unlike a basic script, this version is **responsive**, **user‑friendly**, and **professionally structured** using Object‑Oriented Programming (OOP) and threading.
+
+---
+
+## ✨ What I Improved (vs. Original Script)
+
+| Original Version | My Improved Version |
+|------------------|----------------------|
+| Used `googletrans` (often breaks) | Used `deep-translator` (stable, actively maintained) |
+| UI froze during translation | Added **threading** – translation runs in background, UI never freezes |
+| No progress indicator | Added **progress bar** that spins while translating |
+| Could not swap languages | Added **Swap button** – exchanges source/target and optionally swaps text |
+| No auto‑detection | Added **Auto Detect** source language option |
+| Only translate button | Added **Copy Input, Copy Output, Clear Input, Clear Output** buttons |
+| No status feedback | Added **status bar** showing "Translating...", "Copied!", "Ready" |
+| No keyboard shortcuts | Added **Ctrl+Enter** to translate, **Ctrl+C** to copy output |
+| Basic `pack()` layout, not resizable | Used `grid()` with **weights** – window resizes gracefully, text boxes expand |
+| No error handling for network issues | Added friendly error messages (e.g., "Service unavailable, try later") |
+| Procedural code (global variables) | **Object‑Oriented Programming** – clean class structure, reusable, maintainable |
+| Could not copy empty text | Checks if text exists before copying (shows warning if empty) |
+
+---
+
+## 🎯 Features
+
+| Feature | Description |
+|---------|-------------|
+| **15+ languages** | English, Hindi, Telugu, Tamil, Spanish, French, German, Italian, Portuguese, Russian, Japanese, Korean, Chinese, Arabic, Dutch |
+| **Auto‑detect source** | No need to know the input language – Google detects it automatically |
+| **Swap languages** | One‑click swap of source and target (also swaps text if both fields contain text) |
+| **Copy output** | Copy translated text to clipboard with a button or `Ctrl+C` |
+| **Copy input** | Copy source text to clipboard |
+| **Clear buttons** | Clear input or output separately |
+| **Responsive UI** | Translation runs in a background thread – the window never freezes |
+| **Progress indicator** | A spinning progress bar shows when translation is active |
+| **Status bar** | Displays current action: "Ready", "Translating...", "Copied!", etc. |
+| **Keyboard shortcuts** | `Ctrl+Enter` to translate, `Ctrl+C` to copy output |
+| **Resizable window** | Text boxes expand when you resize the window |
+| **Error handling** | Friendly messages for network errors or empty input |
+
+---
+
+## 💻 Installation
+
+### Prerequisites
+
+- Python 3.8 or higher installed on your system.
+
+Check your Python version:
+
+```bash
+python --version
+```
+
+or
+
+```bash
+python3 --version
+```
+
+### Install the Required Library
+
+Open your terminal or command prompt and run:
+
+```bash
+pip install deep-translator
+```
+
+No API key is required. The application works immediately after installing the library.
+
+### Get the Project Files
+
+Download or clone the project and ensure the main file is saved as:
+
+```text
+translator.py
+```
+
+inside your project folder.
+
+Example:
+
+```text
+task1_Code_Alpha/
+│
+├── language_translator.py
+└── README.md
+```
+
+---
+## 📬 Contact
+
+**Author:** Mohammad Saniya Sultana
+
+**LinkedIn:** https://www.linkedin.com/in/mohammad-saniya-ai-dev/
+
+---
+
+This project was developed as part of the **CodeAlpha Artificial Intelligence Internship** and demonstrates the practical application of Python, GUI Development, Object-Oriented Programming, API Integration, and Multithreading concepts.
+
+Thank you for reviewing this project! 🚀
+                                                            
+                                                            
+
+                                                            
+                                                            
+
+                                                            
