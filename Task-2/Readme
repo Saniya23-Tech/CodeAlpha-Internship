@@ -1,0 +1,215 @@
+# 🩺 Kidney Health Advisor Chatbot
+
+## Overview
+
+The **Kidney Health Advisor Chatbot** is an AI-powered FAQ chatbot developed to provide users with reliable information about kidney health. The chatbot uses **Natural Language Processing (NLP)** techniques to understand user questions and return the most relevant answers from a predefined knowledge base.
+
+The system is designed to educate users about:
+
+- Kidney health and prevention
+- Healthy lifestyle habits
+- Foods to avoid
+- Effects of smoking and medications
+- Signs and symptoms of kidney problems
+
+The chatbot is deployed using **Gradio**, providing a simple and interactive web interface.
+
+---
+
+## Problem Statement
+
+Many people are unaware of the importance of kidney health and the factors that can damage kidney function. This project aims to create an easy-to-use chatbot that can answer frequently asked questions related to kidney health and promote awareness through educational responses.
+
+---
+
+## Features
+
+- Interactive chatbot interface using Gradio
+- FAQ-based response system
+- Natural Language Processing (NLP)
+- TF-IDF vectorization for text understanding
+- Cosine similarity for question matching
+- Automatic text cleaning and preprocessing
+- Special keyword detection for smoking-related questions
+- Random kidney health tips for user awareness
+- Beginner-friendly and lightweight implementation
+
+---
+
+## Technologies Used
+
+- Python
+- NLTK
+- Scikit-learn
+- Gradio
+- CSV
+- Regular Expressions (Regex)
+
+---
+
+## Installation
+
+Install the required libraries:
+
+```bash
+pip install nltk scikit-learn gradio
+```
+
+---
+
+## Dataset
+
+The chatbot uses a custom CSV file:
+
+```text
+Health.csv
+```
+
+The CSV file contains two columns:
+
+| Question | Answer |
+|----------|---------|
+| How to keep kidneys healthy? | Drink enough water and maintain a healthy diet. |
+| Is smoking harmful to kidneys? | Smoking damages kidney blood vessels and increases disease risk. |
+
+Example structure:
+
+```csv
+question,answer
+How to keep kidneys healthy?,Drink plenty of water and maintain a healthy lifestyle.
+What foods are bad for kidneys?,Avoid excessive salt and processed foods.
+```
+
+---
+
+## Project Workflow
+
+### 1. Load FAQ Dataset
+
+Questions and answers are loaded from the CSV file.
+
+### 2. Text Preprocessing
+
+User input is cleaned by:
+
+- Converting text to lowercase
+- Removing punctuation and special characters
+- Keeping only meaningful words
+
+### 3. TF-IDF Vectorization
+
+Questions are converted into numerical vectors using TF-IDF so that the machine can understand text.
+
+### 4. Similarity Matching
+
+Cosine Similarity is used to compare the user's question with existing FAQ questions.
+
+### 5. Response Generation
+
+The chatbot returns the most relevant answer from the knowledge base.
+
+### 6. Health Tips
+
+Random kidney health tips are occasionally displayed to encourage healthy habits.
+
+---
+
+## Why TF-IDF?
+
+TF-IDF (Term Frequency–Inverse Document Frequency) converts text into numerical representations that help the model identify important words within questions.
+
+Advantages:
+
+- Lightweight and efficient
+- Easy to implement
+- Suitable for FAQ chatbots
+- Requires no deep learning training
+
+---
+
+## Why Cosine Similarity?
+
+Cosine Similarity measures how similar two text vectors are.
+
+It helps the chatbot:
+
+- Find the closest matching question
+- Improve response accuracy
+- Handle different wording styles
+
+---
+
+## Special Feature: Smoking Detection
+
+The chatbot contains a keyword override system for smoking-related queries.
+
+Keywords such as:
+
+- smoking
+- smoke
+- cigarette
+- tobacco
+- nicotine
+
+always trigger a dedicated educational response explaining the harmful effects of smoking on kidney health.
+
+---
+
+## Example Questions
+
+Users can ask:
+
+- How to keep kidneys healthy?
+- Is smoking harmful to kidneys?
+- What foods are bad for kidneys?
+- Can painkillers damage kidneys?
+- What are the signs of kidney problems?
+- How can I prevent kidney disease?
+- How much water should I drink?
+
+---
+
+## Project Structure
+
+```text
+Task_2_Kidney_Health_Advisor_Chatbot/
+│
+├── chatbot.py
+├── Health.csv
+├── README.md
+└── requirements.txt
+```
+
+---
+
+## Applications
+
+This project can be useful for:
+
+- Health awareness programs
+- Educational applications
+- School and college projects
+- AI chatbot demonstrations
+- Beginner NLP projects
+
+---
+
+## Future Improvements
+
+- Add multilingual support
+- Integrate voice input and output
+- Use transformer models for better understanding
+- Expand the health knowledge base
+- Add support for additional diseases
+
+---
+
+## Author
+
+**Mohammad Saniya**
+
+CodeAlpha AI Intern
+
+---
+
+*"Learning consistently and building one project at a time."* 🚀
